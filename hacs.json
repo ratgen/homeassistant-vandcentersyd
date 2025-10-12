@@ -1,0 +1,11 @@
+{
+  "domain": "bdforsyning",
+  "name": "BD Smart Forsyning",
+  "version": "0.0.1",
+  "documentation": "https://github.com/pratgen/homeassistant-bdforsyning",
+  "issue_tracker": "https://github.com/pratgen/homeassistant-bdforsyning/issues",
+  "codeowners": ["@pratgen"],
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "loggers": ["custom_components.bdforsyning"]
+}
