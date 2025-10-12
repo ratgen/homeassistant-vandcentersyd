@@ -58,13 +58,7 @@ class VandCenterAPI:
 
         result_json = result.json()
 
-        print(result_json)
-
-        result_status = result_json['Result']
-        if result_status == 1:
-            _LOGGER.debug("Login success")
-        else:
-            raise LoginFailed("Login failed. Bye.")
+        _LOGGER.debug(f"Response from API. Status: {result.status_code}, Body: {result_json}")
 
         self._access_token = result_json["AuthToken"]
         self._token_ttl = 3600
@@ -86,6 +80,7 @@ class VandCenterAPI:
         _LOGGER.debug(f"Response from API. Status: {result.status_code}, Body: {result.text}")
 
         result_json = result.json()
+        print(result_json)
         
         locations = result_json['Locations'][0]
         device = locations["Devices"][0]
@@ -100,8 +95,9 @@ class VandCenterAPI:
         """
         Get the status of the watermeter device.
         """
-        url = "api/Stats/readings/devices"
+        _LOGGER.debug(f"Getting latest data")
 
+        url = "api/Stats/readings/devices"
         payload = {
             "DeviceContainerIds" : [self._device_id],
             "QuantityTypes": ["WaterVolume"],
@@ -115,12 +111,17 @@ class VandCenterAPI:
             raise HTTPFailed(str(e))
 
         result_json = result.json()
+        print(result_json)
 
         return result_json[0]["Readings"][0]
 
     def authenticate(self):
-        self._login()
-        self._get_customer_data()
+        try: 
+            self._login()
+            self._get_customer_data()
+        except (LoginFailed, HTTPFailed) as err:
+            _LOGGER.error(err)
+            return False
 
         return True
 

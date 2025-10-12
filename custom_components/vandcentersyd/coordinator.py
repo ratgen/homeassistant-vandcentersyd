@@ -6,8 +6,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 import logging
 
-from custom_components.vandcentersyd import VandCenterAPI
-from custom_components.vandcentersyd.const import MIN_TIME_BETWEEN_UPDATES
+from .pyvandcentersyd.vandcentersyd import VandCenterAPI
+from .const import MIN_TIME_BETWEEN_UPDATES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,9 +22,9 @@ class VandcenterSydUpdateCoordinator(DataUpdateCoordinator):
             entry: ConfigEntry,
     ) -> None:
         """Initialize DataUpdateCoordinator"""
-        self.api = api
+        self.api: VandCenterAPI = api
         self.ha = ha
-        self.supplierId = entry.data['supplierId']
+        # self.supplierId = entry.data['supplierId']
 
         super().__init__(
             ha,

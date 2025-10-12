@@ -18,17 +18,8 @@ ENTITY_NAME: Final = "Water Meter Total"
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
-    """Set up Vandcenter Syd sensor from a config entry."""
-    # API object was stored by __init__.py as hass.data[DOMAIN][config_entry.entry_id]
-    api = hass.data[DOMAIN][config_entry.entry_id]
-
-    # IMPORTANT: pass (hass, api, entry) in this order
-    coordinator = VandcenterSydUpdateCoordinator(hass, api, config_entry)
-
-    # First refresh to populate coordinator.data (raises ConfigEntryNotReady on failure)
-    await coordinator.async_config_entry_first_refresh()
-
-    # Your API returns a single reading dict -> create one entity
+    stored = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator = stored["coordinator"]  # <- this is the real coordinator created in __init__.py
     async_add_entities([VandcenterSydSensor(coordinator, config_entry)])
 
 
@@ -37,7 +28,7 @@ class VandcenterSydSensor(CoordinatorEntity[VandcenterSydUpdateCoordinator], Sen
 
     _attr_has_entity_name = True
     _attr_name = ENTITY_NAME
-    _attr_device_class = SensorDeviceClass.VOLUME
+    _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
 

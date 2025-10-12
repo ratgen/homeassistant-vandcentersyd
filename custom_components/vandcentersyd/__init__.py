@@ -21,11 +21,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username = entry.data['username']
     password = entry.data['password']
 
-    # supplierid = entry.data['supplierid']
-    # entityname = entry.data['entityname']
-    # billing_period_skew = entry.data['billing_period_skew'] # This one is true if the billing period is from July to June
-    # is_water_supply = entry.data['is_water_supply'] # This one is true if the module is for eforsyning water delivery (false for regional heating)
-
     _LOGGER.debug(f"eForsyning ConfigData: {entry.data}")
 
     # Use the coordinator which handles regular fetch of API data.
@@ -33,6 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = VandcenterSydUpdateCoordinator(hass, api, entry)
     # If you do not want to retry setup on failure, use
     #await coordinator.async_refresh()
+
     # This one repeats connecting to the API until first success.
     await coordinator.async_config_entry_first_refresh()
 
