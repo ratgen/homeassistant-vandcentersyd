@@ -1,5 +1,5 @@
 {
-  "domain": "bdforsyning",
+  "domain": "vandcentersyd",
   "name": "BD Smart Forsyning",
   "version": "0.0.1",
   "documentation": "https://github.com/pratgen/homeassistant-bdforsyning",
@@ -7,5 +7,5 @@
   "codeowners": ["@pratgen"],
   "iot_class": "cloud_polling",
   "requirements": [],
-  "loggers": ["custom_components.bdforsyning"]
+  "loggers": ["custom_components.vandcentersyd"]
 }
