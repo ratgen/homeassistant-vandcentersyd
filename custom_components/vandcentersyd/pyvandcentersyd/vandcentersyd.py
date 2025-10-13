@@ -114,6 +114,37 @@ class VandCenterAPI:
         print(result_json)
 
         return result_json[0]["Readings"][0]
+    
+    def get_data_to(self):
+        url = "/api/Stats/usage/devices"
+
+        now = datetime.now(timezone.utc)
+        start = now - timedelta(days=30)
+
+        def iso_z(dt: datetime) -> str:
+            # Milliseconds + 'Z' for UTC
+            return dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+        payload = {
+            "DeviceIds" : [self._device_id],
+            "QuantityTypes": ["WaterVolume"],
+            "Interval": "Hourly",
+            "From": iso_z(start),
+            "To": iso_z(now),
+            "Unit":	"KubicMeter"
+        }
+
+        try:
+            result = requests.post(self._baseurl + url, json=payload, headers=self._create_headers())
+            result.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            raise HTTPFailed(str(e))
+
+        result_json = result.json()
+        print(result_json)
+
+        return result_json["Buckets"]
+
 
     def authenticate(self):
         try: 
