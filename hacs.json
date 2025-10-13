@@ -1,10 +1,10 @@
 {
   "domain": "vandcentersyd",
-  "name": "BD Smart Forsyning",
+  "name": "BD Smart Forsyning Vandcenter Syd",
   "version": "0.0.1",
-  "documentation": "https://github.com/pratgen/homeassistant-bdforsyning",
-  "issue_tracker": "https://github.com/pratgen/homeassistant-bdforsyning/issues",
-  "codeowners": ["@pratgen"],
+  "documentation": "https://github.com/pratgen/homeassistant-vandcentersyd",
+  "issue_tracker": "https://github.com/pratgen/homeassistant-vandcentersyd/issues",
+  "codeowners": ["@ratgen"],
   "iot_class": "cloud_polling",
   "requirements": [],
   "loggers": ["custom_components.vandcentersyd"]
