@@ -1,5 +1,6 @@
 # homeassistant-vandcentersyd
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 homeassistant-vandcentersyd is a Home Assistant integration for getting water
 meter data from the regional water company Vandcenter Syd, and their provider BD
