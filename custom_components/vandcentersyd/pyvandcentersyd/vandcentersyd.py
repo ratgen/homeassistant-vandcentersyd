@@ -1,8 +1,12 @@
+from datetime import timedelta, datetime, timezone
 from typing import Mapping
 
 import requests
 import random
 import logging
+import datetime
+
+from pytz import timezone
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,23 +118,21 @@ class VandCenterAPI:
         print(result_json)
 
         return result_json[0]["Readings"][0]
-    
-    def get_data_to(self):
-        url = "/api/Stats/usage/devices"
 
-        now = datetime.now(timezone.utc)
-        start = now - timedelta(days=30)
+    def _get_hourly_data(self, from_time: datetime = None, to_time: datetime = None):
+        url = "/api/Stats/usage/devices"
 
         def iso_z(dt: datetime) -> str:
             # Milliseconds + 'Z' for UTC
             return dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
+
         payload = {
             "DeviceIds" : [self._device_id],
             "QuantityTypes": ["WaterVolume"],
             "Interval": "Hourly",
-            "From": iso_z(start),
-            "To": iso_z(now),
+            "From": iso_z(from_time),
+            "To": iso_z(to_time),
             "Unit":	"KubicMeter"
         }
 
@@ -141,9 +143,21 @@ class VandCenterAPI:
             raise HTTPFailed(str(e))
 
         result_json = result.json()
-        print(result_json)
+        rows = result_json["Buckets"]
 
-        return result_json["Buckets"]
+        print(rows)
+        print(rows[0]["Count"])
+
+        filtered = [r for r in rows if r["Count"] == 1]
+        print(filtered)
+        return filtered
+    
+    def get_data_to(self):
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+        start = now - timedelta(days=30)
+
+        return self._get_hourly_data(from_time=start, to_time=now)
 
 
     def authenticate(self):

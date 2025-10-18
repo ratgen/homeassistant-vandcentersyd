@@ -8,6 +8,7 @@ import logging
 
 from .pyvandcentersyd.vandcentersyd import VandCenterAPI
 from .const import MIN_TIME_BETWEEN_UPDATES
+from .stat_push import push_hourly_stats
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,13 +49,16 @@ class VandcenterSydUpdateCoordinator(DataUpdateCoordinator):
 
         # Retrieve latest data from the API
         try:
-            data = await self.ha.async_add_executor_job(self.api.get_latest)
+            data = await self.ha.async_add_executor_job(self.api.get_data_to)
         except Exception as error:
             raise ConfigEntryNotReady from error
 
-        # Return the data
-        # The data is stored in the coordinator as a .data field.
-        return data
+        rows = data or []
+        print(rows)
+
+        await push_hourly_stats(self.hass, rows)
+
+        return rows
 
 
 class InvalidAuth(HomeAssistantError):
