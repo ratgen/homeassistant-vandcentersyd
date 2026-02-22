@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import uuid
 import logging
+from functools import partial
 from typing import Any, Final, Iterable, Optional, Dict, List
 from dataclasses import dataclass
 from collections import OrderedDict
@@ -21,6 +22,7 @@ from homeassistant.components.recorder.statistics import (
     async_add_external_statistics,
     get_last_statistics,  # sync; call via executor
 )
+from homeassistant.components.recorder import get_instance
 
 from .const import DOMAIN
 from .coordinator import VandcenterSydUpdateCoordinator
@@ -154,7 +156,29 @@ async def _get_last_row(hass: HomeAssistant, statistic_id: str) -> tuple[Optiona
     """
     Returns (end_datetime_utc, last_sum) for statistic_id, or (None, 0.0).
     """
-    res = await hass.async_add_executor_job(get_last_statistics, hass, 1, statistic_id, {"sum", "state"})
+    # Home Assistant changed get_last_statistics signature across versions.
+    # Try known call patterns in order.
+    call_variants = [
+        (hass, 1, statistic_id, {"sum", "state"}),
+        (hass, 1, statistic_id, None, {"sum", "state"}),
+    ]
+
+    res = None
+    last_error: Exception | None = None
+    recorder = get_instance(hass)
+
+    for args in call_variants:
+        try:
+            res = await recorder.async_add_executor_job(partial(get_last_statistics, *args))
+            break
+        except TypeError as err:
+            last_error = err
+
+    if res is None:
+        if last_error:
+            raise last_error
+        return None, 0.0
+
     series = res.get(statistic_id) or []
     if not series:
         return None, 0.0
@@ -255,14 +279,32 @@ class VandcenterSydSensor(CoordinatorEntity[VandcenterSydUpdateCoordinator], Sen
         self.hass.async_create_task(self._ingest_and_update())
         # Also refresh attributes from the latest coordinator payload
         reading = self.coordinator.data
+
+        latest: Optional[dict[str, Any]] = None
+        raw_rows_count: Optional[int] = None
+
         if isinstance(reading, dict):
+            rows = reading.get("Rows")
+            if isinstance(rows, list):
+                raw_rows_count = len(rows)
+
+            if isinstance(reading.get("Latest"), dict):
+                latest = reading.get("Latest")
+            elif "Timestamp" in reading and "Value" in reading:
+                latest = reading
+
+        if isinstance(latest, dict):
             self._attrs.update({
-                "raw_timestamp": reading.get("Timestamp"),
-                "raw_quantity_type": reading.get("QuantityType"),
-                "raw_unit": reading.get("Unit"),
+                "raw_timestamp": latest.get("Timestamp"),
+                "raw_quantity_type": latest.get("QuantityType"),
+                "raw_unit": latest.get("Unit"),
                 "device_identifier": getattr(self.coordinator.api, "_device_identifier", None),
                 "device_id": getattr(self.coordinator.api, "_device_id", None),
             })
+
+        if raw_rows_count is not None:
+            self._attrs["raw_rows_count"] = raw_rows_count
+
         self.async_write_ha_state()
 
     async def _ingest_and_update(self) -> None:
