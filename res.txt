@@ -1,0 +1,190 @@
+
+Schema for /api/Customer
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Locations": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "IsPrimary": {
+              "type": "boolean"
+            },
+            "LocationId": {
+              "type": "string"
+            },
+            "Name": {
+              "type": "string"
+            },
+            "Address": {
+              "type": "string"
+            },
+            "ZipCode": {
+              "type": "string"
+            },
+            "City": {
+              "type": "string"
+            },
+            "PrimaryIdent": {
+              "type": "string"
+            },
+            "SecondaryIdent": {
+              "type": "string"
+            },
+            "Devices": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "string"
+                    },
+                    "DeviceIdent": {
+                      "type": "string"
+                    },
+                    "DeviceType": {
+                      "type": "string"
+                    },
+                    "ActiveAlarms": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "BrandName": {
+                      "type": "string"
+                    },
+                    "InstallationDate": {
+                      "type": "string"
+                    },
+                    "ActivationDate": {
+                      "type": "string"
+                    },
+                    "ReceivedQuantityTypes": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Id",
+                    "DeviceIdent",
+                    "DeviceType",
+                    "ActiveAlarms",
+                    "BrandName",
+                    "InstallationDate",
+                    "ActivationDate",
+                    "ReceivedQuantityTypes"
+                  ]
+                }
+              ]
+            },
+            "LegacyDevices": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "DeviceIdent": {
+                      "type": "string"
+                    },
+                    "DeactivationDate": {
+                      "type": "string"
+                    },
+                    "ReadingValue": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "DeviceIdent",
+                    "DeactivationDate",
+                    "ReadingValue"
+                  ]
+                }
+              ]
+            },
+            "NotificationSettings": {
+              "type": "object",
+              "properties": {
+                "Consent": {
+                  "type": "boolean"
+                },
+                "AllowByTextMessage": {
+                  "type": "boolean"
+                },
+                "AllowByEmail": {
+                  "type": "boolean"
+                },
+                "NotifyOnAlarms": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "Consent",
+                "AllowByTextMessage",
+                "AllowByEmail",
+                "NotifyOnAlarms"
+              ]
+            },
+            "IsOwner": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "IsPrimary",
+            "LocationId",
+            "Name",
+            "Address",
+            "ZipCode",
+            "City",
+            "PrimaryIdent",
+            "SecondaryIdent",
+            "Devices",
+            "LegacyDevices",
+            "NotificationSettings",
+            "IsOwner"
+          ]
+        }
+      ]
+    },
+    "CreatedDate": {
+      "type": "string"
+    },
+    "ModifiedDate": {
+      "type": "string"
+    },
+    "Id": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "string"
+    },
+    "PhoneNumber": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "Locations",
+    "CreatedDate",
+    "ModifiedDate",
+    "Id",
+    "Email",
+    "PhoneNumber"
+  ]
+}
+
+

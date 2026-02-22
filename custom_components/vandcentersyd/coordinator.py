@@ -50,6 +50,7 @@ class VandcenterSydUpdateCoordinator(DataUpdateCoordinator):
         # Retrieve latest data from the API
         try:
             data = await self.ha.async_add_executor_job(self.api.get_data_to)
+            total_data = await self.ha.async_add_executor_job(self.api.get_latest)
         except Exception as error:
             raise ConfigEntryNotReady from error
 
@@ -58,7 +59,7 @@ class VandcenterSydUpdateCoordinator(DataUpdateCoordinator):
 
         await push_hourly_stats(self.hass, rows)
 
-        return rows
+        return total_data
 
 
 class InvalidAuth(HomeAssistantError):

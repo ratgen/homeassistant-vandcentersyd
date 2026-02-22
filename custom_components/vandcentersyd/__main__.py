@@ -4,7 +4,9 @@ from custom_components.vandcentersyd import VandCenterAPI
 
 
 def main():
-    api = VandCenterAPI("", s)
+    s = 't2TEQm\\."@Y4aAf#=b;s\'kLM7V#U'
+
+    api = VandCenterAPI("peter@pratgen.dk", s)
     api.authenticate()
 
     ret = api.get_data_to()

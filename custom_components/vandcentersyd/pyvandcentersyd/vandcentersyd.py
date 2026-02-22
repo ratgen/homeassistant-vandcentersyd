@@ -84,8 +84,7 @@ class VandCenterAPI:
         _LOGGER.debug(f"Response from API. Status: {result.status_code}, Body: {result.text}")
 
         result_json = result.json()
-        print(result_json)
-        
+
         locations = result_json['Locations'][0]
         device = locations["Devices"][0]
 
@@ -115,7 +114,6 @@ class VandCenterAPI:
             raise HTTPFailed(str(e))
 
         result_json = result.json()
-        print(result_json)
 
         return result_json[0]["Readings"][0]
 
@@ -124,12 +122,12 @@ class VandCenterAPI:
 
         def iso_z(dt: datetime) -> str:
             # Milliseconds + 'Z' for UTC
-            return dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+            return dt.replace(minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
         payload = {
             "DeviceIds" : [self._device_id],
-            "QuantityTypes": ["WaterVolume"],
+            "QuantityType": "WaterVolume",
             "Interval": "Hourly",
             "From": iso_z(from_time),
             "To": iso_z(to_time),
@@ -144,12 +142,7 @@ class VandCenterAPI:
 
         result_json = result.json()
         rows = result_json["Buckets"]
-
-        print(rows)
-        print(rows[0]["Count"])
-
         filtered = [r for r in rows if r["Count"] == 1]
-        print(filtered)
         return filtered
     
     def get_data_to(self):
